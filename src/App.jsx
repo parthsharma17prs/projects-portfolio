@@ -195,7 +195,7 @@ function App() {
             <div key={idx} className="flex gap-10 items-center">
               {techs.map((tech, i) => (
                 <div key={i} className="flex items-center gap-10">
-                  <span className="display-title text-6xl md:text-8xl text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.2)] uppercase">
+                  <span className="display-title text-6xl md:text-8xl text-[#F5F5F0] uppercase">
                     {tech}
                   </span>
                   <span className="w-4 h-4 rounded-full bg-brand-accent" />
