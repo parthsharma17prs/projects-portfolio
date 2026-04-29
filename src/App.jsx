@@ -188,17 +188,17 @@ function App() {
         </div>
       </main>
 
-      {/* Scrolling Marquee */}
-      <div className="border-y border-brand-border py-6 overflow-hidden bg-brand-dark flex flex-col justify-center">
-        <div className="flex animate-marquee gap-10 whitespace-nowrap">
+      {/* Scrolling Marquee Ribbon */}
+      <div className="py-4 overflow-hidden bg-[#F5F5F0] flex flex-col justify-center transform -rotate-2 scale-105 my-20 shadow-2xl z-20 relative border-y border-brand-dark/20">
+        <div className="flex animate-marquee gap-10 whitespace-nowrap items-center">
           {Array(4).fill(0).map((_, idx) => (
             <div key={idx} className="flex gap-10 items-center">
               {techs.map((tech, i) => (
                 <div key={i} className="flex items-center gap-10">
-                  <span className="display-title text-6xl md:text-8xl text-[#F5F5F0] uppercase">
+                  <span className="font-sans font-black text-4xl md:text-5xl text-black uppercase tracking-tighter">
                     {tech}
                   </span>
-                  <span className="w-4 h-4 rounded-full bg-brand-accent" />
+                  <span className="w-3 h-3 rounded-full bg-black" />
                 </div>
               ))}
             </div>
