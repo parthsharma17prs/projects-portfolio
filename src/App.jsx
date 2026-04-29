@@ -195,7 +195,7 @@ function App() {
             <div key={idx} className="flex gap-10 items-center">
               {techs.map((tech, i) => (
                 <div key={i} className="flex items-center gap-10">
-                  <span className="font-sans font-black text-4xl md:text-5xl text-black uppercase tracking-tighter">
+                  <span className="font-anton text-4xl md:text-6xl text-black uppercase tracking-wide">
                     {tech}
                   </span>
                   <span className="w-3 h-3 rounded-full bg-black" />
