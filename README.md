@@ -17,3 +17,4 @@ If you are developing a production application, we recommend using TypeScript wi
 Update #1
 Update #2
 Update #3
+Update #4
