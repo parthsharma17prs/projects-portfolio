@@ -137,7 +137,7 @@ function App() {
             STUDIO ©2026
           </div>
           <div className="mono-tag text-xs">
-            <a href="mailto:hello@example.com" className="hover-target">Let's Talk</a>
+            <a href="mailto:prsforads@gmail.com" className="hover-target">Let's Talk</a>
           </div>
         </div>
       </nav>
@@ -206,11 +206,33 @@ function App() {
         </div>
       </div>
 
-      <footer className="py-20 px-6 max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-        <h2 className="display-title text-5xl md:text-8xl">Ready to <br/><span className="italic text-brand-gray">collaborate?</span></h2>
-        <a href="mailto:hello@example.com" className="mono-tag text-sm border-b border-white pb-1 hover:text-brand-accent hover:border-brand-accent transition-colors hover-target">
-          Start a project
-        </a>
+      <footer className="py-20 px-6 max-w-[1600px] mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-brand-border pb-12 mb-12">
+          <h2 className="display-title text-5xl md:text-8xl">Ready to <br/><span className="italic text-brand-gray">collaborate?</span></h2>
+          <a href="mailto:prsforads@gmail.com" className="mono-tag text-sm border-b border-white pb-1 hover:text-brand-accent hover:border-brand-accent transition-colors hover-target">
+            prsforads@gmail.com
+          </a>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mono-tag text-xs text-brand-gray">
+          <div className="flex flex-col gap-4">
+            <span className="text-white mb-2">Socials</span>
+            <a href="https://github.com/parthsharma17prs" target="_blank" rel="noreferrer" className="hover:text-brand-accent hover-target transition-colors">GitHub</a>
+            <a href="https://linkedin.com/" target="_blank" rel="noreferrer" className="hover:text-brand-accent hover-target transition-colors">LinkedIn</a>
+            <a href="https://instagram.com/techiie_prs" target="_blank" rel="noreferrer" className="hover:text-brand-accent hover-target transition-colors">Instagram (techiie_prs)</a>
+          </div>
+          
+          <div className="flex flex-col gap-4">
+            <span className="text-white mb-2">Contact</span>
+            <a href="mailto:prsforads@gmail.com" className="hover:text-brand-accent hover-target transition-colors">prsforads@gmail.com</a>
+            <a href="tel:+918319556016" className="hover:text-brand-accent hover-target transition-colors">+91 83195 56016</a>
+          </div>
+
+          <div className="flex flex-col gap-4 lg:col-span-2 lg:items-end">
+            <span className="text-white mb-2">Agency</span>
+            <a href="http://www.prsagency.gt.tc" target="_blank" rel="noreferrer" className="hover:text-brand-accent hover-target transition-colors">www.prsagency.gt.tc</a>
+          </div>
+        </div>
       </footer>
     </div>
   );
