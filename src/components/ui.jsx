@@ -26,13 +26,27 @@ export const DotPattern = ({ className, width = 16, height = 16, cx = 1, cy = 1,
   );
 };
 
-// 2. Shiny Button
+// 2. Retro Grid (21st.dev style)
+export const RetroGrid = ({ className }) => {
+  return (
+    <div className={cn("pointer-events-none absolute h-full w-full overflow-hidden opacity-50 [perspective:200px]", className)}>
+      {/* Grid */}
+      <div className="absolute inset-0 [transform:rotateX(35deg)]">
+        <div className="animate-grid [background-repeat:repeat] [background-size:60px_60px] [height:300vh] [inset:0%_0px] [margin-left:-50%] [transform-origin:100%_0_0] [width:600vw] [background-image:linear-gradient(to_right,rgba(255,255,255,0.2)_1px,transparent_0),linear-gradient(to_bottom,rgba(255,255,255,0.2)_1px,transparent_0)]" />
+      </div>
+      {/* Background Gradient Mask */}
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent to-90%" />
+    </div>
+  );
+};
+
+// 3. Shiny Button
 export const ShinyButton = ({ text = "Shiny Button", className, onClick }) => {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "relative flex h-12 items-center justify-center overflow-hidden rounded-full bg-brand-surface px-8 py-2 font-medium text-white shadow-xl ring-1 ring-white/10 transition-transform active:scale-95",
+        "relative flex h-12 items-center justify-center overflow-hidden rounded-full bg-brand-surface px-8 py-2 font-medium text-white shadow-xl ring-1 ring-white/10 transition-transform active:scale-95 hover:ring-white/30",
         className
       )}
       style={{ '--shimmer-width': '200px' }}
@@ -43,7 +57,7 @@ export const ShinyButton = ({ text = "Shiny Button", className, onClick }) => {
   );
 };
 
-// 3. Border Beam
+// 4. Border Beam
 export const BorderBeam = ({ className, duration = 15, size = 200, colorFrom = "var(--color-brand-accent)", colorTo = "transparent" }) => {
   return (
     <div
@@ -67,7 +81,7 @@ export const BorderBeam = ({ className, duration = 15, size = 200, colorFrom = "
   );
 };
 
-// 4. Marquee
+// 5. Marquee
 export const Marquee = ({ className, reverse, pauseOnHover = false, children, repeat = 4 }) => {
   return (
     <div
@@ -94,7 +108,7 @@ export const Marquee = ({ className, reverse, pauseOnHover = false, children, re
   );
 };
 
-// 5. Animated Text Word by Word
+// 6. Animated Text Word by Word
 export const AnimatedText = ({ text, className }) => {
   const words = text.split(" ");
 

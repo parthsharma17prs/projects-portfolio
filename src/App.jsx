@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { shuffledProjects } from './data';
+import { RetroGrid } from './components/ui';
 import './index.css';
 
 // --- Custom Cursor Component ---
@@ -143,18 +144,49 @@ function App() {
       </nav>
 
       {/* Hero Section */}
-      <header className="relative min-h-[90vh] flex flex-col justify-end px-6 pb-20 max-w-[1600px] mx-auto">
-        <div className="flex flex-col gap-6 md:flex-row justify-between items-end mb-12 border-b border-brand-border pb-12">
+      <header className="relative min-h-[100vh] flex flex-col justify-center items-center text-center px-6 pb-20 pt-32 w-full overflow-hidden">
+        <RetroGrid />
+        
+        <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto w-full">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white text-[10px] font-mono uppercase tracking-widest mb-10 hover-target"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
+            </span>
+            Available for new projects
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            className="display-title text-[12vw] md:text-[9vw] font-normal leading-[0.85] uppercase mb-8"
+          >
+            Creative <br />
+            <span className="italic text-brand-gray">Developer</span><span className="text-brand-accent">.</span>
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+            className="mono-tag text-xs md:text-sm text-brand-gray max-w-xl mx-auto leading-relaxed mb-16"
+          >
+            We engineer digital experiences that live at the intersection of design, technology, and storytelling. Operating globally to build scalable, award-winning interfaces.
+          </motion.p>
+
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-md"
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+            className="flex flex-col sm:flex-row gap-8 items-center justify-center w-full"
           >
-            <p className="mono-tag text-xs text-brand-gray mb-6 leading-relaxed">
-              We engineer digital experiences that live at the intersection of design, technology, and storytelling. Operating globally.
-            </p>
-            <div className="w-24 h-24 border border-white/20 rounded-full flex items-center justify-center relative hover-target group">
+            <div className="w-24 h-24 border border-white/20 rounded-full flex items-center justify-center relative hover-target group cursor-pointer" onClick={() => window.scrollTo(0, window.innerHeight)}>
               <svg viewBox="0 0 100 100" className="w-full h-full animate-spin-slow absolute inset-0">
                 <path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent" />
                 <text className="mono-tag text-[9px] fill-white tracking-widest">
@@ -163,18 +195,17 @@ function App() {
               </svg>
               <ArrowUpRight className="text-white group-hover:rotate-45 transition-transform" />
             </div>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            className="text-right"
-          >
-            <h1 className="display-title text-[15vw] md:text-[10vw] font-normal leading-[0.8] uppercase">
-              Selected <br />
-              <span className="italic text-brand-gray pr-4">Works</span><span className="text-brand-accent">.</span>
-            </h1>
+            <div className="flex gap-12 text-left border-l border-white/10 pl-8 hidden sm:flex">
+               <div>
+                 <p className="text-white text-3xl display-title">120+</p>
+                 <p className="mono-tag text-[9px] text-brand-gray mt-1">Projects Delivered</p>
+               </div>
+               <div>
+                 <p className="text-white text-3xl display-title">99%</p>
+                 <p className="mono-tag text-[9px] text-brand-gray mt-1">Client Satisfaction</p>
+               </div>
+            </div>
           </motion.div>
         </div>
       </header>
