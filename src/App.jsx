@@ -1,68 +1,119 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { shuffledProjects } from './data';
-import { DotPattern, ShinyButton, Marquee, AnimatedText } from './components/ui';
 import './index.css';
 
-const ProjectRow = ({ project, index }) => {
-  const [isHovered, setIsHovered] = useState(false);
+// --- Custom Cursor Component ---
+const CustomCursor = () => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    const updatePosition = (e) => {
+      setPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseOver = (e) => {
+      if (e.target.closest('a') || e.target.closest('button') || e.target.closest('.hover-target')) {
+        setIsHovering(true);
+      } else {
+        setIsHovering(false);
+      }
+    };
+
+    window.addEventListener('mousemove', updatePosition);
+    window.addEventListener('mouseover', handleMouseOver);
+
+    return () => {
+      window.removeEventListener('mousemove', updatePosition);
+      window.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, []);
 
   return (
     <motion.div
+      className={`custom-cursor ${isHovering ? 'hovering' : ''} flex items-center justify-center`}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "tween", ease: "backOut", duration: 0.15 }}
+    >
+      <AnimatePresence>
+        {isHovering && (
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            className="text-[10px] font-mono font-bold text-white uppercase mix-blend-normal"
+          >
+            Explore
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+// --- Project Row Component ---
+const ProjectRow = ({ project, index }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const rowRef = useRef(null);
+  
+  // Calculate a random rotation and a placeholder image color for the preview
+  const rotate = (index % 2 === 0 ? 1 : -1) * (2 + Math.random() * 4);
+  const hue = (index * 45) % 360;
+
+  return (
+    <motion.div
+      ref={rowRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: (index % 5) * 0.1 }}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: index * 0.05 }}
+      className="row-border group relative flex flex-col md:flex-row items-start md:items-center justify-between py-10 md:py-16 hover-target cursor-none transition-colors duration-500 hover:bg-white/[0.02] px-6"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="project-row group relative flex flex-col md:flex-row md:items-center justify-between py-8 md:py-10 transition-colors duration-500 hover:bg-white/[0.02] px-6 rounded-2xl cursor-pointer"
       onClick={() => project.link && window.open(project.link, '_blank')}
     >
-      <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12 flex-1">
-        <h3 className="text-3xl md:text-5xl font-bold text-white/80 group-hover:text-brand-accent transition-colors duration-500">
+      {/* Title & Index */}
+      <div className="flex items-start md:items-center gap-6 md:gap-16 w-full md:w-1/2">
+        <span className="mono-tag text-xs text-brand-gray w-8 mt-2 md:mt-0">
+          {(index + 1).toString().padStart(2, '0')}
+        </span>
+        <h3 className="display-title text-5xl md:text-7xl font-normal group-hover:italic group-hover:text-brand-accent transition-all duration-500">
           {project.title}
         </h3>
-        
-        <div className="flex flex-wrap gap-2">
+      </div>
+
+      {/* Tech Stack & Status */}
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-16 mt-6 md:mt-0 w-full md:w-1/2 justify-end">
+        <div className="flex flex-wrap gap-3 max-w-[300px]">
           {project.techStack.map((tech, i) => (
-            <span 
-              key={i} 
-              className="px-4 py-1.5 rounded-full border border-white/10 text-xs font-bold uppercase tracking-wider text-brand-gray group-hover:border-brand-accent/30 group-hover:text-white transition-colors duration-500"
-            >
+            <span key={i} className="mono-tag text-[10px] text-brand-gray/80 px-3 py-1 border border-white/10 rounded-full">
               {tech}
             </span>
           ))}
         </div>
-      </div>
-
-      <div className="mt-6 md:mt-0 flex items-center gap-6">
-        <span className={`text-sm font-bold uppercase tracking-widest ${project.deployed ? 'text-brand-accent' : 'text-brand-gray'}`}>
-          {project.deployed ? 'Live' : 'Local'}
-        </span>
         
-        <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-brand-accent group-hover:border-brand-accent transition-all duration-500 overflow-hidden relative">
-          <ArrowUpRight 
-            size={24} 
-            className="text-white group-hover:text-brand-dark transition-all duration-500 absolute row-arrow" 
-          />
+        <div className="flex items-center gap-6">
+          <span className={`mono-tag text-xs ${project.deployed ? 'text-white' : 'text-brand-gray'}`}>
+            {project.deployed ? 'Live' : 'Local'}
+          </span>
+          <ArrowUpRight size={32} strokeWidth={1} className="text-white opacity-50 group-hover:opacity-100 group-hover:rotate-45 group-hover:text-brand-accent transition-all duration-500" />
         </div>
       </div>
 
-      {/* Floating Hover Image/Gradient Effect */}
+      {/* Hover Image Reveal */}
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            exit={{ opacity: 0, scale: 0.8, rotate: 10 }}
-            transition={{ duration: 0.3 }}
-            className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] rounded-3xl bg-brand-surface border border-white/10 shadow-2xl overflow-hidden pointer-events-none z-10"
+            initial={{ opacity: 0, scale: 0.8, rotate: rotate - 10, y: "10%" }}
+            animate={{ opacity: 1, scale: 1, rotate: rotate, y: "-50%" }}
+            exit={{ opacity: 0, scale: 0.8, rotate: rotate + 10, y: "10%" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden md:flex absolute top-1/2 left-[40%] w-[400px] h-[250px] bg-brand-surface border border-white/5 shadow-2xl pointer-events-none z-20 items-center justify-center overflow-hidden"
           >
-            <div className="absolute inset-0 opacity-30" style={{ background: `radial-gradient(circle at center, ${project.color || 'var(--color-brand-accent)'} 0%, transparent 70%)` }} />
-            <div className="absolute inset-0 flex items-center justify-center text-white/50 font-bold text-2xl tracking-widest uppercase">
-              Preview
-            </div>
+            <div className="absolute inset-0 opacity-20" style={{ background: `linear-gradient(45deg, hsl(${hue}, 80%, 50%), transparent)` }} />
+            <h4 className="display-title text-4xl italic text-white/50 relative z-10">{project.title}</h4>
           </motion.div>
         )}
       </AnimatePresence>
@@ -71,108 +122,95 @@ const ProjectRow = ({ project, index }) => {
 };
 
 function App() {
-  const techs = ["React", "Next.js", "Tailwind CSS", "Framer Motion", "TypeScript", "Node.js", "GSAP", "Vite", "Supabase"];
+  const techs = ["CREATIVE", "DEVELOPMENT", "STRATEGY", "DESIGN", "MOTION"];
 
   return (
-    <div className="min-h-screen bg-brand-dark relative font-sans text-white">
-      {/* 21st.dev Style Dot Pattern Background */}
-      <DotPattern
-        className="[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
-        width={20}
-        height={20}
-        cr={1.5}
-      />
+    <div className="min-h-screen bg-brand-dark text-white relative">
+      <div className="noise-overlay" />
+      <CustomCursor />
 
-      {/* Floating Navbar */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex items-center gap-8 bg-white/5 backdrop-blur-xl border border-white/10 px-8 py-4 rounded-full shadow-2xl">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center">
-              <div className="w-3 h-3 bg-brand-dark rounded-sm" />
-            </div>
-            <span className="font-bold tracking-tight">Port.</span>
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 w-full z-50 p-6 mix-blend-difference">
+        <div className="flex justify-between items-center text-white">
+          <div className="mono-tag text-xs font-bold flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-brand-accent animate-pulse" />
+            STUDIO ©2026
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-bold text-brand-gray">
-            <a href="#work" className="hover:text-white transition-colors">Work</a>
-            <a href="#about" className="hover:text-white transition-colors">About</a>
+          <div className="mono-tag text-xs">
+            <a href="mailto:hello@example.com" className="hover-target">Let's Talk</a>
           </div>
-          <ShinyButton text="Let's Talk" className="h-10 text-xs px-6" />
         </div>
       </nav>
 
-      {/* Advanced Hero Section */}
-      <header className="relative pt-48 pb-32 px-6 max-w-7xl mx-auto flex flex-col items-center text-center z-10 min-h-[80vh] justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest mb-10"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
-          </span>
-          Next Gen Portfolio
-        </motion.div>
-        
-        <div className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] mb-8">
-          <AnimatedText text="CREATIVE" className="justify-center text-white" />
-          <AnimatedText text="DEVELOPER" className="justify-center text-brand-gray" />
-        </div>
-        
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="text-brand-gray text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed mb-16 font-medium"
-        >
-          Building highly interactive, premium web experiences with cutting-edge frontend technologies.
-        </motion.p>
+      {/* Hero Section */}
+      <header className="relative min-h-[90vh] flex flex-col justify-end px-6 pb-20 max-w-[1600px] mx-auto">
+        <div className="flex flex-col gap-6 md:flex-row justify-between items-end mb-12 border-b border-brand-border pb-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-md"
+          >
+            <p className="mono-tag text-xs text-brand-gray mb-6 leading-relaxed">
+              We engineer digital experiences that live at the intersection of design, technology, and storytelling. Operating globally.
+            </p>
+            <div className="w-24 h-24 border border-white/20 rounded-full flex items-center justify-center relative hover-target group">
+              <svg viewBox="0 0 100 100" className="w-full h-full animate-spin-slow absolute inset-0">
+                <path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent" />
+                <text className="mono-tag text-[9px] fill-white tracking-widest">
+                  <textPath href="#circlePath" startOffset="0%">• SCROLL TO EXPLORE • SCROLL TO EXPLORE</textPath>
+                </text>
+              </svg>
+              <ArrowUpRight className="text-white group-hover:rotate-45 transition-transform" />
+            </div>
+          </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-6"
-        >
-          <ShinyButton 
-            text={<>View Projects <ArrowRight size={18} /></>}
-            className="h-16 px-10 text-lg bg-white text-brand-dark hover:bg-brand-accent transition-colors"
-          />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            className="text-right"
+          >
+            <h1 className="display-title text-[15vw] md:text-[10vw] font-normal leading-[0.8] uppercase">
+              Selected <br />
+              <span className="italic text-brand-gray pr-4">Works</span><span className="text-brand-accent">.</span>
+            </h1>
+          </motion.div>
+        </div>
       </header>
 
-      {/* Marquee Section */}
-      <div className="relative py-10 border-y border-white/10 bg-brand-dark z-10 overflow-hidden flex flex-col items-center">
-        <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-brand-dark to-transparent z-20 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-brand-dark to-transparent z-20 pointer-events-none" />
-        <Marquee className="max-w-full" pauseOnHover={false} repeat={8}>
-          {techs.map((tech, i) => (
-            <span key={i} className="text-4xl md:text-6xl font-bold uppercase tracking-tighter text-white/5 mx-8">
-              {tech}
-            </span>
-          ))}
-        </Marquee>
-      </div>
-
-      {/* Advanced Interactive Project Rows */}
-      <main id="work" className="px-6 py-32 max-w-7xl mx-auto relative z-10">
-        <div className="mb-20 flex justify-between items-end">
-          <h2 className="text-5xl md:text-7xl font-bold tracking-tight">Selected <br/><span className="text-brand-accent">Works.</span></h2>
-          <p className="text-brand-gray font-bold uppercase tracking-widest hidden md:block">(2024 - 2026)</p>
-        </div>
-
-        <div className="border-t border-white/10">
+      {/* Main Content */}
+      <main className="max-w-[1600px] mx-auto pb-32">
+        <div className="border-t border-brand-border mt-10">
           {shuffledProjects.map((project, index) => (
             <ProjectRow key={index} project={project} index={index} />
           ))}
         </div>
       </main>
 
-      <footer className="border-t border-white/10 py-16 text-center z-10 relative bg-brand-dark">
-        <DotPattern className="[mask-image:linear-gradient(transparent,white)] opacity-50" width={30} height={30} cr={1} />
-        <h2 className="text-4xl font-bold mb-8 relative z-10">Let's build something <span className="text-brand-accent">magical.</span></h2>
-        <ShinyButton text="Get in Touch" className="mx-auto relative z-10" />
+      {/* Scrolling Marquee */}
+      <div className="border-y border-brand-border py-6 overflow-hidden bg-brand-dark flex flex-col justify-center">
+        <div className="flex animate-marquee gap-10 whitespace-nowrap">
+          {Array(4).fill(0).map((_, idx) => (
+            <div key={idx} className="flex gap-10 items-center">
+              {techs.map((tech, i) => (
+                <div key={i} className="flex items-center gap-10">
+                  <span className="display-title text-6xl md:text-8xl text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.2)] uppercase">
+                    {tech}
+                  </span>
+                  <span className="w-4 h-4 rounded-full bg-brand-accent" />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <footer className="py-20 px-6 max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+        <h2 className="display-title text-5xl md:text-8xl">Ready to <br/><span className="italic text-brand-gray">collaborate?</span></h2>
+        <a href="mailto:hello@example.com" className="mono-tag text-sm border-b border-white pb-1 hover:text-brand-accent hover:border-brand-accent transition-colors hover-target">
+          Start a project
+        </a>
       </footer>
     </div>
   );
