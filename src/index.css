@@ -4,11 +4,11 @@
 @theme {
   --font-sans: 'Plus Jakarta Sans', sans-serif;
 
-  --color-brand-dark: #0F1616; /* Deep dark background */
-  --color-brand-surface: #1A2424; /* Slightly lighter surface */
+  --color-brand-dark: #09090b; /* Zinc 950 */
+  --color-brand-surface: #18181b; /* Zinc 900 */
   --color-brand-accent: #C2F970; /* Lime green */
-  --color-brand-gray: #8A9C9C; /* Muted gray text */
-  --color-brand-border: #2A3636; /* Subtle border */
+  --color-brand-gray: #a1a1aa; /* Zinc 400 */
+  --color-brand-border: #27272a; /* Zinc 800 */
 }
 
 body {
@@ -42,19 +42,37 @@ body {
   background: var(--color-brand-border);
 }
 
-.fintech-card {
-  background: var(--color-brand-surface);
-  border: 1px solid var(--color-brand-border);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
 }
 
-.fintech-card:hover {
-  border-color: rgba(194, 249, 112, 0.3);
-  box-shadow: 0 10px 40px rgba(194, 249, 112, 0.05);
+@keyframes shimmer {
+  0%, 90%, 100% { background-position: calc(-100% - var(--shimmer-width)) 0; }
+  30%, 60% { background-position: calc(100% + var(--shimmer-width)) 0; }
 }
 
-.glass-pill {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+@keyframes border-beam {
+  100% { offset-distance: 100%; }
+}
+
+.animate-marquee {
+  animation: marquee var(--duration, 30s) linear infinite;
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 8s infinite;
+}
+
+/* Base styles for the project rows */
+.project-row {
+  border-bottom: 1px solid var(--color-brand-border);
+}
+.project-row:last-child {
+  border-bottom: none;
+}
+.project-row:hover .row-arrow {
+  transform: rotate(-45deg);
+  color: var(--color-brand-accent);
 }
