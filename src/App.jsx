@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useInView, useAnimation } from 'framer-motion';
-import { ExternalLink, Code2, Rocket, Globe } from 'lucide-react';
+import { ExternalLink, Code2, Globe, Rocket, ArrowRight, LayoutGrid } from 'lucide-react';
 import { shuffledProjects } from './data';
 import './index.css';
 
 const ProjectCard = ({ project, index }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
   const controls = useAnimation();
 
   useEffect(() => {
@@ -16,16 +16,11 @@ const ProjectCard = ({ project, index }) => {
   }, [isInView, controls]);
 
   const variants = {
-    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    hidden: { opacity: 0, y: 30 },
     visible: { 
       opacity: 1, 
       y: 0, 
-      scale: 1,
-      transition: { 
-        duration: 0.6, 
-        delay: index % 3 * 0.2,
-        ease: [0.25, 0.1, 0.25, 1]
-      }
+      transition: { duration: 0.5, delay: index % 3 * 0.15 }
     }
   };
 
@@ -35,65 +30,62 @@ const ProjectCard = ({ project, index }) => {
       variants={variants}
       initial="hidden"
       animate={controls}
-      whileHover={{ y: -10, transition: { duration: 0.2 } }}
-      className="glass-panel rounded-2xl p-6 relative overflow-hidden group border border-white/5 hover:border-white/20 transition-all"
+      whileHover={{ y: -5 }}
+      className="fintech-card rounded-[2rem] p-8 flex flex-col h-full relative overflow-hidden group transition-all duration-300"
     >
-      {/* Background glow on hover */}
-      <div 
-        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-2xl"
-        style={{ background: `radial-gradient(circle at center, ${project.color} 0%, transparent 70%)` }}
-      />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent opacity-0 group-hover:opacity-5 transition-opacity blur-3xl rounded-full" />
       
-      <div className="relative z-10 flex flex-col h-full">
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-2xl font-serif font-bold text-warm-white tracking-wide group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
-            {project.title}
-          </h3>
-          <div className="flex items-center gap-2">
-            {project.deployed ? (
-              <span className="flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
-                <Globe size={12} /> Live
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                <Rocket size={12} /> Local
-              </span>
-            )}
-          </div>
+      <div className="flex justify-between items-start mb-8">
+        <div className="w-12 h-12 rounded-full bg-brand-dark border border-brand-border flex items-center justify-center text-brand-accent">
+          <LayoutGrid size={20} />
         </div>
-
-        <div className="mt-auto pt-6 flex flex-col gap-4">
-          <div className="flex flex-wrap gap-2">
-            {project.techStack.map((tech, i) => (
-              <span 
-                key={i} 
-                className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-md bg-white/5 text-gray-300 border border-white/5"
-              >
-                <Code2 size={12} className="text-gray-400" />
-                {tech}
-              </span>
-            ))}
-          </div>
-
-          {project.link ? (
-            <a 
-              href={project.link} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 group/btn"
-            >
-              View Project
-              <ExternalLink size={16} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-            </a>
+        <div className="flex items-center gap-2">
+          {project.deployed ? (
+            <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-brand-accent text-brand-dark">
+              <Globe size={12} /> Live
+            </span>
           ) : (
-            <button 
-              disabled
-              className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 text-gray-500 font-medium cursor-not-allowed"
-            >
-              No Link Available
-            </button>
+            <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-brand-border text-brand-gray">
+              <Rocket size={12} /> Local
+            </span>
           )}
         </div>
+      </div>
+
+      <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-brand-accent transition-colors">
+        {project.title}
+      </h3>
+
+      <div className="flex flex-wrap gap-2 mb-8">
+        {project.techStack.map((tech, i) => (
+          <span 
+            key={i} 
+            className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border border-brand-border text-brand-gray"
+          >
+            <Code2 size={12} />
+            {tech}
+          </span>
+        ))}
+      </div>
+
+      <div className="mt-auto">
+        {project.link ? (
+          <a 
+            href={project.link} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center justify-between w-full p-4 rounded-2xl bg-brand-dark hover:bg-brand-accent text-white hover:text-brand-dark font-bold transition-all duration-300 group/btn"
+          >
+            <span>View Project</span>
+            <div className="w-8 h-8 rounded-full bg-brand-surface group-hover/btn:bg-brand-dark flex items-center justify-center transition-colors">
+              <ExternalLink size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+            </div>
+          </a>
+        ) : (
+          <div className="flex items-center justify-center w-full p-4 rounded-2xl bg-brand-dark text-brand-gray font-bold opacity-50 cursor-not-allowed">
+            No Link Available
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -101,48 +93,78 @@ const ProjectCard = ({ project, index }) => {
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] selection:bg-white/20 selection:text-white">
-      {/* Aesthetic Background Elements */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-aesthetic-blue/20 blur-[120px]" />
-        <div className="absolute top-[40%] -right-[10%] w-[40%] h-[60%] rounded-full bg-aesthetic-red/10 blur-[150px]" />
-        <div className="absolute -bottom-[20%] left-[20%] w-[60%] h-[40%] rounded-full bg-aesthetic-green/10 blur-[120px]" />
-        
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-      </div>
+    <div className="min-h-screen bg-brand-dark relative">
+      {/* Decorative Blur */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-brand-accent/5 blur-[120px] rounded-[100%] pointer-events-none" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-24 md:py-32">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center mb-20 md:mb-32"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel mb-8"
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 p-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between glass-pill px-6 py-4 rounded-full">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-brand-accent flex items-center justify-center">
+              <div className="w-3 h-3 bg-brand-dark rounded-sm" />
+            </div>
+            <span className="font-bold text-lg tracking-tight">Portfolio.</span>
+          </div>
+          <a 
+            href="#" 
+            className="hidden sm:flex items-center gap-2 text-sm font-bold bg-white text-brand-dark px-5 py-2.5 rounded-full hover:bg-brand-accent transition-colors"
           >
-            <span className="w-2 h-2 rounded-full bg-aesthetic-green animate-pulse" />
-            <span className="text-sm font-medium tracking-wider text-gray-300 uppercase">Portfolio Gallery</span>
-          </motion.div>
-          
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 tracking-tight">
-            MY <span className="text-transparent bg-clip-text bg-gradient-to-r from-aesthetic-blue via-aesthetic-green to-aesthetic-red animate-gradient-x">PROJECTS</span>
-          </h1>
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-sans font-light leading-relaxed">
-            A curated collection of my recent works, showcasing a variety of frontend interfaces, creative coding experiments, and full-stack web applications.
-          </p>
-        </motion.div>
+            Contact Me <ArrowRight size={16} />
+          </a>
+        </div>
+      </nav>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      {/* Hero Section */}
+      <header className="pt-48 pb-20 px-6 max-w-7xl mx-auto text-center relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-accent/30 bg-brand-accent/10 text-brand-accent text-xs font-bold uppercase tracking-wider mb-8">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
+            </span>
+            Latest Works 2026
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8">
+            Creative Landing Page <br />
+            <span className="text-brand-gray">Web Design for</span> <br />
+            <span className="text-brand-accent">Easily Fintech</span> Web App
+          </h1>
+          
+          <p className="text-brand-gray text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
+            A curated collection of my recent projects, fully redesigned using the sleek, modern aesthetic of the "Easily" fintech platform. Built with React, Tailwind CSS v4, and Framer Motion.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="w-full sm:w-auto h-14 px-8 rounded-full bg-brand-accent hover:bg-white text-brand-dark font-bold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-accent/20 group">
+              Explore Projects
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button className="w-full sm:w-auto h-14 px-8 rounded-full bg-brand-surface border border-brand-border hover:border-brand-accent/50 text-white font-bold transition-colors flex items-center justify-center gap-2">
+              View Github
+            </button>
+          </div>
+        </motion.div>
+      </header>
+
+      {/* Projects Grid */}
+      <main className="px-6 pb-32 max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {shuffledProjects.map((project, index) => (
             <ProjectCard key={index} project={project} index={index} />
           ))}
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-brand-border py-12 text-center text-brand-gray text-sm font-medium">
+        <p>Built with ❤️ using React & Tailwind v4. Inspired by Easily Fintech.</p>
+      </footer>
     </div>
   );
 }
