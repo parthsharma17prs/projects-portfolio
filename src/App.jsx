@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, X, ExternalLink, ChevronLeft } from 'lucide-react';
 import { shuffledProjects } from './data';
 import { RetroGrid } from './components/ui';
 import './index.css';
@@ -55,7 +55,7 @@ const CustomCursor = () => {
 };
 
 // --- Project Row Component ---
-const ProjectRow = ({ project, index }) => {
+const ProjectRow = ({ project, index, onOpenProject }) => {
   const [isHovered, setIsHovered] = useState(false);
   const rowRef = useRef(null);
   
@@ -73,7 +73,7 @@ const ProjectRow = ({ project, index }) => {
       className="row-border group relative flex flex-col md:flex-row items-start md:items-center justify-between py-10 md:py-16 hover-target cursor-none transition-colors duration-500 hover:bg-white/[0.02] px-6"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => project.link && window.open(project.link, '_blank')}
+      onClick={() => project.link && onOpenProject(project.link)}
     >
       {/* Title & Index */}
       <div className="flex items-start md:items-center gap-6 md:gap-16 w-full md:w-1/2">
@@ -123,6 +123,7 @@ const ProjectRow = ({ project, index }) => {
 };
 
 function App() {
+  const [activeProject, setActiveProject] = useState(null);
   const techs = ["CREATIVE", "DEVELOPMENT", "STRATEGY", "DESIGN", "MOTION"];
 
   return (
@@ -215,7 +216,7 @@ function App() {
       <main className="max-w-[1600px] mx-auto pb-32">
         <div className="border-t border-brand-border mt-10">
           {shuffledProjects.map((project, index) => (
-            <ProjectRow key={index} project={project} index={index} />
+            <ProjectRow key={index} project={project} index={index} onOpenProject={setActiveProject} />
           ))}
         </div>
       </main>
@@ -266,7 +267,61 @@ function App() {
           </div>
         </div>
       </footer>
+      {/* Iframe Portal Overlay */}
+      <AnimatePresence mode="wait">
+        {activeProject && (
+          <motion.div 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-[100] bg-brand-dark flex flex-col"
+          >
+            {/* Header Bar */}
+            <div className="flex justify-between items-center px-6 py-4 bg-black/80 backdrop-blur-xl border-b border-white/10 z-10">
+              <button 
+                onClick={() => setActiveProject(null)}
+                className="flex items-center gap-2 text-brand-gray hover:text-white transition-colors uppercase font-mono text-xs tracking-widest hover-target"
+              >
+                <ChevronLeft size={16} /> Close Preview
+              </button>
+              <div className="mono-tag text-[10px] text-white/30 hidden md:flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-pulse" />
+                SECURE PORTAL
+              </div>
+              <div className="flex items-center gap-4">
+                 <button 
+                   onClick={() => window.open(activeProject, '_blank')}
+                   className="p-2 text-brand-gray hover:text-brand-accent transition-colors hover-target"
+                   title="Open original link"
+                 >
+                   <ExternalLink size={18} />
+                 </button>
+              </div>
+            </div>
+
+            {/* Main Content (Iframe) */}
+            <div className="flex-1 w-full bg-white relative overflow-hidden">
+               <div className="absolute inset-0 flex items-center justify-center -z-10 bg-brand-dark">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-brand-accent border-t-transparent rounded-full animate-spin" />
+                    <p className="mono-tag text-[10px] text-brand-gray tracking-widest animate-pulse">ESTABLISHING CONNECTION</p>
+                  </div>
+               </div>
+               <iframe 
+                 src={activeProject} 
+                 className="w-full h-full border-none shadow-2xl"
+                 title="Project Preview"
+               />
+               
+               {/* URL Bar Overlay Mask */}
+               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-accent/50 to-transparent opacity-50" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+
   );
 }
 
