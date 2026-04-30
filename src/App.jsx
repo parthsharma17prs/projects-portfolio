@@ -123,10 +123,87 @@ const ProjectRow = ({ project, index }) => {
 };
 
 function App() {
+  const [isLocked, setIsLocked] = useState(true);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    // Disable right-click
+    const handleContextMenu = (e) => e.preventDefault();
+    // Disable common dev tools shortcuts
+    const handleKeyDown = (e) => {
+      if (e.keyCode === 123) e.preventDefault(); // F12
+      if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) e.preventDefault(); // Ctrl+Shift+I/J/C
+      if (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) e.preventDefault(); // Cmd+Opt+I/J/C
+      if ((e.ctrlKey || e.metaKey) && e.keyCode === 85) e.preventDefault(); // Ctrl+U (View Source)
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const handleUnlock = () => {
+    if (password === 'prs2026') {
+      setIsLocked(false);
+      setError(false);
+    } else {
+      setError(true);
+      setTimeout(() => setError(false), 2000);
+    }
+  };
+
   const techs = ["CREATIVE", "DEVELOPMENT", "STRATEGY", "DESIGN", "MOTION"];
+
+  if (isLocked) {
+    return (
+      <div className="min-h-screen bg-brand-dark flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+        <div className="noise-overlay" />
+        <RetroGrid />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10 w-full max-w-md bg-white/5 backdrop-blur-2xl border border-white/10 p-12 rounded-[2rem] shadow-2xl"
+        >
+          <div className="w-20 h-20 bg-brand-accent rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(194,249,112,0.3)]">
+            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-brand-dark"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <h2 className="display-title text-4xl mb-4">Protected Area</h2>
+          <p className="mono-tag text-[10px] text-brand-gray mb-8">Enter access code to view portfolio</p>
+          
+          <div className="relative mb-6">
+            <input 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleUnlock()}
+              placeholder="••••••••"
+              className={`w-full bg-white/5 border ${error ? 'border-red-500' : 'border-white/10'} rounded-xl px-6 py-4 text-center text-2xl tracking-[1em] focus:outline-none focus:border-brand-accent transition-colors`}
+            />
+            {error && <p className="text-red-500 text-[10px] mt-2 mono-tag uppercase">Incorrect access code</p>}
+          </div>
+
+          <button 
+            onClick={handleUnlock}
+            className="w-full bg-brand-accent text-brand-dark py-4 rounded-xl font-bold uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-transform"
+          >
+            Access Portfolio
+          </button>
+        </motion.div>
+        
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 mono-tag text-[9px] text-white/20">
+          PRS Agency © 2026 • Encryption Enabled
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-brand-dark text-white relative">
+
       <div className="noise-overlay" />
       <CustomCursor />
 
